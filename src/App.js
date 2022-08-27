@@ -8,11 +8,14 @@ import GifList from './Components/GifList';
 function App() {
   const [ data, setData ] = useState([]);
   const [ query, setQuery ] = useState('cats');
+  const [ isLoading, setIsLoading ] = useState(true);
   const performSearch = ( value )=> setQuery(value);
+
   useEffect( () => {
     axios(`http://api.giphy.com/v1/gifs/search?q=${query}&limit=24&api_key=6r6ZPCbdpEuVFo3gw8rOF8ccLS9I6CPt`)
       .then(response => setData(response.data.data))
-      .catch(error => console.log({ message: 'Error fetching and parsing data', error: error.message }));
+      .catch(error => console.log({ message: 'Error fetching and parsing data', error: error.message }))
+      .finally( ()=>setIsLoading(false) );
   }, [ query ]);
 
   return (
@@ -24,7 +27,9 @@ function App() {
         </div>
       </div>
       <div className="main-content">
-        <GifList data={data} />
+        {
+          isLoading? <p>Loading...</p> : <GifList data={data} />
+        }
       </div>
     </>
   );
